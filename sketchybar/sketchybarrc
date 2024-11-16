@@ -1,0 +1,92 @@
+source "$HOME/.config/icons.sh"
+
+ifont="Hack Nerd Font:Bold:12.0"
+idfont="FontAwesome:Regular:11.0"
+lfont="Tamzen:Medium:13.0"
+bcolor="0x883a3a3a"
+bdcolor="0xff606060"
+lcolor="0xffa8a8a8"
+hcolor="0xfff0f0f0"
+
+bar=(
+  height=24
+  position=top
+  padding_left=2
+  padding_right=2
+  margin=2
+  y_offset=2
+  border_width=1
+  color="$bcolor"
+  border_color="$bdcolor"
+)
+
+default=(
+  drawing=on
+  icon.font="$ifont"
+  icon.color="$lcolor"
+  icon.highlight_color="$hcolor" 
+  icon.padding_left=6
+  icon.padding_right=2
+  label.font="$lfont"
+  label.color="$lcolor"
+  label.highlight_color="$hcolor" 
+  label.padding_left=2
+  label.padding_right=6
+  background.drawing=on
+  background.color=0xff3a3a3a 
+  background.corner_radius=3
+  background.padding_left=2
+  background.padding_right=2
+)
+
+sketchybar --bar "${bar[@]}"
+sketchybar --default "${default[@]}"
+
+for i in {1..5}; do
+  sketchybar --add space space.$i left --set space.$i associated_display=1 associated_space=$i 
+  sketchybar --set space.$i script="~/.config/sketchybar/plugins/space.sh" \
+             --subscribe space.$i space_change
+done
+
+sketchybar --set space.1 icon=${ICONS_SPACE[0]} label="$ICON_TERM term"
+sketchybar --set space.2 icon=${ICONS_SPACE[1]} label="$ICON_CHAT slack"
+sketchybar --set space.3 icon=${ICONS_SPACE[2]} label="$ICON_WEB web"
+sketchybar --set space.4 icon=${ICONS_SPACE[3]} label="$ICON_MAIL mail"
+sketchybar --set space.5 icon=${ICONS_SPACE[4]} label="$ICON_LIST todo"
+
+sketchybar --add bracket spaces '/space\..*/' \
+		   --set spaces background.color=0xff686868 \
+		   background.corner_radius=0 \
+		   background.border_width=1 \
+		   background.border_color="$bdcolor" \
+		   background.height=24
+
+sketchybar --update
+
+sketchybar --add item title center \
+           --set title script="~/.config/sketchybar/plugins/window_title.sh" \
+           --subscribe title front_app_switched space_change 
+
+sketchybar --add item time right \
+           --set time update_freq=10 \
+                 icon=$ICON_CLOCK  \
+                 script="~/.config/sketchybar/plugins/time.sh"
+
+sketchybar --add item date right \
+           --set date update_freq=10 \
+                 icon=$ICON_CALENDAR  \
+                 script="~/.config/sketchybar/plugins/date.sh"
+
+sketchybar --add item battery right \
+           --set battery update_freq=30 \
+                 script="~/.config/sketchybar/plugins/batt.sh"
+
+sketchybar --add bracket r time date battery \
+           --set r background.color=0xff686868 \
+                   background.corner_radius=3 \
+		   background.border_width=1 \
+                   background.border_color="$bdcolor" \
+                   background.height=24
+
+sketchybar --update
+
